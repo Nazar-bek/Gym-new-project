@@ -1,5 +1,5 @@
 import { useAuthState } from "@/stores/auth.store";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
@@ -17,7 +17,17 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase";
+import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { Terminal } from "lucide-react";
+
 const Login = () => {
+  const [isLoading, setIsloading] = useState(false);
+  const [isError, setIsError] = useState("");
+  const navigate = useNavigate();
+
   const { setAuth } = useAuthState();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -28,7 +38,16 @@ const Login = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
-    console.log(values);
+    const { email, password } = values;
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (error) {
+      const result = error as Error;
+      setIsError(result.message);
+    } finally {
+      setIsloading(false);
+    }
   };
   return (
     <div className="flex flex-col ">
@@ -43,6 +62,15 @@ const Login = () => {
         </span>
       </p>
       <Separator className="my-3" />
+      {isError && (
+        <Alert className="mb-3" variant="destructive">
+          <Terminal />
+          <AlertTitle></AlertTitle>
+          <AlertDescription>
+            You can add components and dependencies to your app using the cli.
+          </AlertDescription>
+        </Alert>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
@@ -52,27 +80,38 @@ const Login = () => {
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
                 <FormControl>
-                  <Input placeholder="example@gmail.com" {...field} />
+                  <Input
+                    placeholder="example@gmail.com"
+                    disabled={isLoading}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-           <FormField
+          <FormField
             control={form.control}
             name="password"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <Input placeholder="******" type="password" {...field} />
+                  <Input
+                    placeholder="******"
+                    type="password"
+                    disabled={isLoading}
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="mt-2">
-            <Button type="submit" className="h-12 w-full">Submit</Button>
+            <Button type="submit" disabled={isLoading} className="h-12 w-full">
+              Submit
+            </Button>
           </div>
         </form>
       </Form>
