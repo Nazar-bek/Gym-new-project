@@ -11,6 +11,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import {createUserWithEmailAndPassword} from "firebase/auth"
 import { auth } from "@/firebase";
 import { useNavigate } from "react-router-dom";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { RiAlertLine } from "react-icons/ri";
+import FillLoading from "../shared/FillLoading";
 const Register = () => {
   const [isLoading, setIsloading] = useState(false)
   const [isError, setIsError] = useState("")
@@ -38,12 +41,14 @@ const Register = () => {
       }finally{
         setIsloading(false)
       }
-                
     };
 
 
   return (
     <div className="flex flex-col">
+      {
+        isLoading && <FillLoading/> 
+      }
       <h2 className="font-bold text-xl ">Register</h2>
       <p>
         Already have an account?{" "}
@@ -55,6 +60,15 @@ const Register = () => {
         </span>
       </p>
       <Separator className="my-3" />
+       {isError && (
+        <Alert className="mb-3" variant="destructive">
+          <AlertTitle>The Error!</AlertTitle>
+          <RiAlertLine/>
+          <AlertDescription>
+            {isError}
+          </AlertDescription>
+        </Alert>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField

@@ -21,7 +21,8 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Terminal } from "lucide-react";
+import { RiAlertLine } from "react-icons/ri";
+import FillLoading from "../shared/FillLoading";
 
 const Login = () => {
   const [isLoading, setIsloading] = useState(false);
@@ -39,8 +40,10 @@ const Login = () => {
 
   const onSubmit = async (values: z.infer<typeof loginSchema>) => {
     const { email, password } = values;
+     setIsloading(true)
     try {
       const res = await signInWithEmailAndPassword(auth, email, password);
+     
       navigate("/");
     } catch (error) {
       const result = error as Error;
@@ -51,6 +54,9 @@ const Login = () => {
   };
   return (
     <div className="flex flex-col ">
+      {
+        isLoading && <FillLoading/> 
+      }
       <h2 className="font-bold text-xl ">Login</h2>
       <p className="text-muted-foreground">
         Don't have an account?{" "}
@@ -64,10 +70,10 @@ const Login = () => {
       <Separator className="my-3" />
       {isError && (
         <Alert className="mb-3" variant="destructive">
-          <Terminal />
-          <AlertTitle></AlertTitle>
+          <AlertTitle>The Error!</AlertTitle>
+          <RiAlertLine/>
           <AlertDescription>
-            You can add components and dependencies to your app using the cli.
+            {isError}
           </AlertDescription>
         </Alert>
       )}
