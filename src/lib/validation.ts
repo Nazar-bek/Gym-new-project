@@ -16,3 +16,7 @@ export const registerSchema = z.object({
     message: "Passwords do not match!",
     path: ["password"],
   })
+
+  export const createTaskSchema = z.object({
+    task: z.string().min(5)
+  })

@@ -14,6 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { RiAlertLine } from "react-icons/ri";
 import FillLoading from "../shared/FillLoading";
+import { useUserState } from "@/stores/auth.user";
 const Register = () => {
   const [isLoading, setIsloading] = useState(false)
   const [isError, setIsError] = useState("")
@@ -27,13 +28,13 @@ const Register = () => {
       confirmPassword: ""
     },
   });
-
-
+    const {setUser} = useUserState()
    const onSubmit = async (values: z.infer<typeof registerSchema>) => {
     setIsloading(true)
       const {email, password} = values
       try {
         const res = await createUserWithEmailAndPassword(auth, email, password)
+        setUser(res.user)
         navigate("/")
       } catch (error) {
         const result = error as Error

@@ -5,6 +5,7 @@ import Navbar from "./components/shared/Navbar";
 import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import { Toaster } from "./components/ui/sonner";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="*" element={<h1>404</h1>}/>
       </Routes>
+      <Toaster position="top-center"/>
     </div>
   );
 };

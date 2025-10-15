@@ -1,20 +1,89 @@
-import React from 'react'
+import TaskForm from "@/components/forms/task-form";
+import TaskItem from "@/components/shared/TaskItem";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { db } from "@/firebase";
+import type { createTaskSchema } from "@/lib/validation";
+import { useUserState } from "@/stores/auth.user";
+import { addDoc, collection } from "firebase/firestore";
+import { BadgePlus } from "lucide-react";
+import React from "react";
+import type z from "zod";
 
 const Dashboard = () => {
+  const [active, setActive] = React.useState(false)
+  const {user} = useUserState()
+  console.log(user?.uid);
+  
+  const onAdd = async ({task}: z.infer<typeof createTaskSchema>) => {
+    if(!user) return null
+    return addDoc(collection(db, "tasks"), {
+      task,
+      status: "unstarted",
+      startTime: null,
+      endTime: null,
+      userId: user.uid
+    }).then(() => setActive(false))
+  }
   return (
-    <div className='h-screen max-w-6xl mx-auto flex items-center'>
+    <>
+    <div className="h-screen max-w-6xl mx-auto flex items-center">
       <div className="grid grid-cols-2 w-full gap-8">
-        <div className='flex flex-col space-y-3'>
-          <div className='w-full p-4 rounded-md flex justify-between bg-gradient-to-t from-background to-secondary'>
-            
+        <div className="flex flex-col space-y-3">
+          <div className="w-full p-4 rounded-md flex justify-between bg-gradient-to-t from-background to-secondary">
+            <div className="text-2xl font-bold">Trainings</div>
+                <Button className="text-black" onClick={() => setActive(!active)} size={"icon"}>
+                  <BadgePlus />
+                </Button>
+          </div>
+          <Separator />
+          <div className="w-full p-4 rounded-md flex justify-between bg-gradient-to-b from-background to-secondary relative min-h-60">
+            <div className="flex flex-col space-y-3 w-full">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <TaskItem key={idx} />
+              ))}
+            </div>
           </div>
         </div>
-        <div >
-          d
+        <div className="flex flex-col space-y-3 relative w-full justify-center">
+          <div className="p-4 rounded-md bg-gradient-to-r from-blue-900 to-background relative h-28">
+            <div className="text-xl font-bold ">Total week</div>
+            <div className="text-3xl font-bold ">23:33:44</div>
+          </div>
+          <div className="p-4 rounded-md bg-gradient-to-r from-blue-900 to-background relative h-28">
+            <div className="text-xl font-bold ">Total week</div>
+            <div className="text-3xl font-bold ">23:33:44</div>
+          </div>
+          <div className="p-4 rounded-md bg-gradient-to-r from-blue-900 to-background relative h-28">
+            <div className="text-xl font-bold ">Total week</div>
+            <div className="text-3xl font-bold ">23:33:44</div>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+                <Dialog open={active} onOpenChange={setActive}>
+              <DialogTrigger>
+                {" "}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create a new Task</DialogTitle>
+                  <Separator/>
+                  <TaskForm handler={onAdd}/>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+    </>
+  );
+};
 
-export default Dashboard
+export default Dashboard;

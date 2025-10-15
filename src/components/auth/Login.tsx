@@ -22,12 +22,13 @@ import { useNavigate } from "react-router-dom";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { RiAlertLine } from "react-icons/ri";
 import FillLoading from "../shared/FillLoading";
+import { useUserState } from "@/stores/auth.user";
 
 const Login = () => {
   const [isLoading, setIsloading] = useState(false);
   const [isError, setIsError] = useState("");
   const navigate = useNavigate();
-
+  const {setUser} = useUserState()
   const { setAuth } = useAuthState();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -42,6 +43,7 @@ const Login = () => {
      setIsloading(true)
     try {
       const res = await signInWithEmailAndPassword(auth, email, password);
+      setUser(res.user)
       console.log(res);
       navigate("/");
     } catch (error) {
