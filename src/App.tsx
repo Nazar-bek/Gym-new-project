@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Navbar from "./components/shared/Navbar";
 import { Route, Routes } from "react-router-dom";
 import Auth from "./pages/Auth";
+import Dashboard from "./pages/Dashboard";
 
 const App = () => {
   return (
@@ -12,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/auth" element={<Auth/>}/>
+        <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="*" element={<h1>404</h1>}/>
       </Routes>
     </div>

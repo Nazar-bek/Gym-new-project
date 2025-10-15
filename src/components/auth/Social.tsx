@@ -3,7 +3,7 @@ import { Separator } from '../ui/separator'
 import { Button } from '../ui/button'
 import { FaGithub, FaGoogle } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth'
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '@/firebase'
 import FillLoading from '../shared/FillLoading'
 
